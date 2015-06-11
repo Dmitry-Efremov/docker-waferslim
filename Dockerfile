@@ -16,4 +16,6 @@ RUN unzip waferslim.zip
 RUN cd waferslim-1.0.2 && \
     python setup.py install
 
+RUN easy_install boto
+
 CMD java -jar fitnesse-standalone.jar -p 3680

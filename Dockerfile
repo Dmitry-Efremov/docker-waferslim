@@ -18,4 +18,8 @@ RUN cd waferslim-1.0.2 && \
 
 RUN easy_install boto
 
+RUN apt-get install -y gcc
+RUN apt-get install -y python-dev
+RUN easy_install spur
+
 CMD java -jar fitnesse-standalone.jar -p 3680

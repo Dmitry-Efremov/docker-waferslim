@@ -1,25 +1,19 @@
-FROM java:7
+FROM python:3.5.2
 
-ENV FITNESSE=http://fitnesse.org/fitnesse-standalone.jar?responder=releaseDownload&release=20150424
+RUN mkdir binaries && \
+    cd /binaries && \
+    curl -o fitnesse-standalone.jar -L \
+    "http://fitnesse.org/fitnesse-standalone.jar?responder=releaseDownload&release=20160618" && \
+    apt-get update && \
+    apt-get install -qq -y unzip openjdk-7-jre-headless && \
+    chmod 777 /binaries/fitnesse-standalone.jar
 
-RUN curl -o fitnesse-standalone.jar -L $FITNESSE
+ENV W_URL https://pypi.python.org/packages/65/60/d154ad7ebc4627238a24505871ccb6495e9dc1f71abe55e8516a65187203/waferslim-1.0.2-py3.1.zip#md5=0a64e550f67b3e02d99373d83498547d
 
-RUN apt-get update && \
-    apt-get install -y python3.4
+RUN cd /binaries && \
+    curl -o waferslim.zip -L \
+    $W_URL && \
+    unzip waferslim && \
+    cd /binaries/waferslim-1.0.2 && python setup.py install
 
-RUN wget https://bootstrap.pypa.io/ez_setup.py -O - | python
-RUN easy_install ez_setup
-
-RUN curl -o waferslim.zip -L https://pypi.python.org/packages/source/w/waferslim/waferslim-1.0.2-py2.6.zip#md5=acacf783444802677358b8b301ab23f9 
-
-RUN unzip waferslim.zip
-RUN cd waferslim-1.0.2 && \
-    python setup.py install
-
-RUN easy_install boto
-
-RUN apt-get install -y gcc
-RUN apt-get install -y python-dev
-RUN easy_install spur
-
-CMD java -jar fitnesse-standalone.jar -p 3680
+CMD ["java","-jar","/binaries/fitnesse-standalone.jar", "-v", "-p", "8081"]
